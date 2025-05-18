@@ -57,7 +57,8 @@ router.post("/verify-payment", async (req, res) => {
       ? new Date(barber.subscriptionExpires)
       : now;
 
-    const newExpiry = new Date(currentExpiry.getTime() + 24 * 60 * 60 * 1000); // add 1 day
+
+    const newExpiry = new Date(currentExpiry.getTime() + 30 * 24 * 60 * 60 * 1000); // add 30 days
 
     // Update subscription info
     barber.subscriptionExpires = newExpiry;

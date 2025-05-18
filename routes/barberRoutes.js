@@ -36,7 +36,7 @@ router.post("/signup", async (req, res) => {
       password: hashedPassword,
       subscriptionActive: false,
       subscriptionExpires: null,
-      freeTrialExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day free trial
+      freeTrialExpires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week free trial
       visible: false,
       ratings: [],
       averageRating: 0,
@@ -48,7 +48,7 @@ router.post("/signup", async (req, res) => {
     await newBarber.save();
 
     res.status(201).json({
-      message: "Signup successful! 1-day free trial started.",
+      message: "Signup successful! 1-week free trial started.",
       barber: newBarber,
     });
   } catch (error) {

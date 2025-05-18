@@ -132,7 +132,8 @@ app.post("/api/paystack/initiate-payment", async (req, res) => {
     const currentExpiry = barber.subscriptionExpires && barber.subscriptionExpires > now
       ? new Date(barber.subscriptionExpires)
       : now;
-    const newExpiry = new Date(currentExpiry.getTime() + 24 * 60 * 60 * 1000); // +1 day
+    const newExpiry = new Date(currentExpiry.getTime() + 30 * 24 * 60 * 60 * 1000); // add 30 days
+
 
     // Update barber
     barber.subscriptionExpires = newExpiry;
