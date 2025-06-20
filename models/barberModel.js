@@ -13,7 +13,7 @@ const barberSchema = new mongoose.Schema({
   subscriptionExpires: Date,
   freeTrialExpires: {
     type: Date,
-    default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1-week free trial
+    default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2-week free trial
 
   },
   visible: { type: Boolean, default: false },

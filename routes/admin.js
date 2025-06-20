@@ -58,3 +58,4 @@ router.delete("/delete-barber/:id", async (req, res) => {
 });
 
 module.exports = router;
+   

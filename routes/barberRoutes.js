@@ -36,7 +36,8 @@ router.post("/signup", async (req, res) => {
       password: hashedPassword,
       subscriptionActive: false,
       subscriptionExpires: null,
-      freeTrialExpires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week free trial
+      freeTrialExpires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2 weeks free trial
+
       visible: false,
       ratings: [],
       averageRating: 0,
@@ -222,3 +223,4 @@ router.get("/:id", async (req, res) => {
 });
 
 module.exports = router;
+    
