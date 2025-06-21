@@ -49,7 +49,7 @@ router.post("/signup", async (req, res) => {
     await newBarber.save();
 
     res.status(201).json({
-      message: "Signup successful! 1-week free trial started.",
+      message: "Signup successful! 2-week free trial started.",
       barber: newBarber,
     });
   } catch (error) {
