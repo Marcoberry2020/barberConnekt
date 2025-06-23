@@ -14,7 +14,6 @@ const barberSchema = new mongoose.Schema({
   freeTrialExpires: {
     type: Date,
     default: () => new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2-week free trial
-
   },
   visible: { type: Boolean, default: false },
   averageRating: { type: Number, default: 0 },
@@ -68,6 +67,13 @@ const barberSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now },
       read: { type: Boolean, default: false },
     },
+  ],
+
+  // ✅ NEW: pictures field (max 3 URLs)
+  pictures: [
+    {
+      type: String, // This will store the image URL or path
+    }
   ],
 });
 

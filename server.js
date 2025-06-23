@@ -46,6 +46,7 @@ app.use("/api/whatsapp", whatsappRoutes);
 app.use("/api/calls", callRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Hardcoded Paystack Secret Key and Frontend URL
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
