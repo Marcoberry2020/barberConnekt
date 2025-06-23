@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const axios = require("axios");
 require("dotenv").config();  // Loading environment variables
 const morgan = require("morgan");
+const path = require("path");
 
 // Import Routes
 const barberRoutes = require("./routes/barberRoutes");
