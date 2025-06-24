@@ -2,68 +2,46 @@
 const bcrypt = require("bcryptjs");
 const Barber = require("../models/barberModel");
 const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
-
+const { storage, cloudinary } = require("../utils/cloudinary");
 const router = express.Router();
 const SALT_ROUNDS = 10;
 
-// ========================
-// Picture Upload Setup
-// ========================
-const uploadDir = path.join(__dirname, "../uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}-${file.fieldname}${ext}`);
-  },
-});
 const upload = multer({ storage });
 
 // ========================
 // Upload Pictures (Max 3)
 // Endpoint: POST /api/barbers/:id/pictures
 // ========================
-router.post("/:id/pictures", upload.array("pictures", 3), async (req, res) => {
+router.post("/upload-picture/:barberId", upload.array("pictures", 3), async (req, res) => {
   try {
-    const barber = await Barber.findById(req.params.id);
+    const barber = await Barber.findById(req.params.barberId);
     if (!barber) return res.status(404).json({ message: "Barber not found" });
 
-    if ((barber.pictures || []).length + req.files.length > 3) {
-      return res.status(400).json({ message: "Maximum of 3 pictures allowed." });
-    }
-
-    const newPaths = req.files.map(file => `uploads/${file.filename}`);
-    barber.pictures = [...(barber.pictures || []), ...newPaths];
+    const urls = req.files.map((file) => file.path); // Cloudinary URLs
+    barber.pictures.push(...urls);
     await barber.save();
 
-    res.json({ message: "Pictures uploaded", pictures: barber.pictures });
+    res.status(200).json(barber);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Upload failed" });
+    res.status(500).json({ error: "Upload failed" });
   }
 });
 
 // ========================
 // Delete Picture
-// Endpoint: DELETE /api/barbers/:id/pictures/:filename
+// Endpoint: DELETE /api/barbers/:id/pictures/:publicId
 // ========================
-router.delete("/:id/pictures/:filename", async (req, res) => {
+router.delete("/:id/pictures/:publicId", async (req, res) => {
   try {
     const barber = await Barber.findById(req.params.id);
     if (!barber) return res.status(404).json({ message: "Barber not found" });
 
-    const picturePath = `uploads/${req.params.filename}`;
-    barber.pictures = (barber.pictures || []).filter(p => p !== picturePath);
-    await barber.save();
+    const publicId = req.params.publicId;
+    await cloudinary.uploader.destroy(publicId);
 
-    const fullPath = path.join(__dirname, "../", picturePath);
-    if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+    barber.pictures = barber.pictures.filter((url) => !url.includes(publicId));
+    await barber.save();
 
     res.json({ message: "Picture deleted", pictures: barber.pictures });
   } catch (err) {
@@ -199,11 +177,7 @@ router.get("/barber-status/:barberId", async (req, res) => {
     const subValid = barber.subscriptionExpires && new Date(barber.subscriptionExpires) > now;
     const trialValid = barber.freeTrialExpires && new Date(barber.freeTrialExpires) > now;
 
-    const status = subValid
-      ? "Active (Paid)"
-      : trialValid
-        ? "On Free Trial"
-        : "Hidden";
+    const status = subValid ? "Active (Paid)" : trialValid ? "On Free Trial" : "Hidden";
 
     res.json({
       success: true,
