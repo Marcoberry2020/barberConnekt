@@ -81,7 +81,10 @@ const upload = multer();
 // Delete Picture by public_id
 // Endpoint: DELETE /api/barbers/:id/pictures/:publicId
 // ========================
-router.delete("/barbers/:id/pictures/:publicId", async (req, res) => {
+
+  
+router.delete("/:id/pictures/:publicId(*)", async (req, res) => {
+
   try {
     const barber = await Barber.findById(req.params.id);
     if (!barber) return res.status(404).json({ message: "Barber not found" });
