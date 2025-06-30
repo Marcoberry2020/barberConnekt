@@ -68,6 +68,15 @@
   }
 ],
 
+ clickLogs: [
+  {
+    date: { type: String }, // Format: 'YYYY-MM-DD'
+    count: { type: Number, default: 0 },
+  },
+],
+clickCount: { type: Number, default: 0 }, // optional for total
+
+
     notifications: [
       {
         message: String,

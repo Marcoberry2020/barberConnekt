@@ -77,8 +77,34 @@ const upload = multer();
 });
 
 
-// ========================
-// Delete Picture by public_id
+// click route
+ // POST /api/barbers/:id/track-click
+router.post('/:id/track-click', async (req, res) => {
+  try {
+    const barber = await Barber.findById(req.params.id);
+    if (!barber) return res.status(404).json({ message: 'Barber not found' });
+
+    const today = new Date().toISOString().split('T')[0]; // e.g., "2025-06-30"
+    let log = barber.clickLogs.find((l) => l.date === today);
+
+    if (log) {
+      log.count += 1;
+    } else {
+      barber.clickLogs.push({ date: today, count: 1 });
+    }
+
+    barber.clickCount = (barber.clickCount || 0) + 1;
+
+    await barber.save();
+    res.json({ success: true, clickCount: barber.clickCount, clickLogs: barber.clickLogs });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Click tracking failed' });
+  }
+});
+
+
+
 // Endpoint: DELETE /api/barbers/:id/pictures/:publicId
 // ========================
 
